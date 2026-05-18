@@ -12,12 +12,32 @@ export const useAuth = () => {
       return;
     }
 
-    supabase.auth.getSession().then(({ data }) => setUserId(data.session?.user.id ?? null));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setUserId(session?.user.id ?? null));
+    let active = true;
 
-    supabase.auth.getSession().finally(() => setInitialized(true));
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!active) return;
+        setUserId(data?.session?.user?.id ?? null);
+      })
+      .catch(() => {
+        if (!active) return;
+        setUserId(null);
+      })
+      .finally(() => {
+        if (!active) return;
+        setInitialized(true);
+      });
 
-    return () => sub.subscription.unsubscribe();
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (!active) return;
+      setUserId(session?.user?.id ?? null);
+    });
+
+    return () => {
+      active = false;
+      sub?.subscription?.unsubscribe();
+    };
   }, [setInitialized, setUserId]);
 
   return {
