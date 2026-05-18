@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+body {
+  @apply bg-zinc-950 text-zinc-100 min-h-screen;
+}
+.safe-p {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+}
+.glass {
+  @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-glass;
+}
