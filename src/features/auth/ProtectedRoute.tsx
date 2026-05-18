@@ -2,9 +2,9 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { userId, initialized, isSupabaseConfigured } = useAuth();
+  const { userId, initialized, initializing, isSupabaseConfigured } = useAuth();
 
-  if (!initialized) {
+  if (!initialized || initializing) {
     return <div className="p-4">Loading…</div>;
   }
 

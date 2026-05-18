@@ -26,46 +26,70 @@ const notConfiguredResult = (): AuthResult => ({
   message: 'Authentication is not configured. Missing Supabase environment variables.'
 });
 
+let authSubscriptionInitialized = false;
+let initializePromise: Promise<void> | null = null;
+
+const initializeAuthSession = async () => {
+  const state = useAuthStore.getState();
+  if (state.initialized || state.initializing) return;
+
+  state.setInitializing(true);
+  try {
+    const { data } = await supabase!.auth.getSession();
+    useAuthStore.getState().setUserId(data?.session?.user?.id ?? null);
+  } catch {
+    useAuthStore.getState().setUserId(null);
+  } finally {
+    const current = useAuthStore.getState();
+    current.setInitializing(false);
+    current.setInitialized(true);
+  }
+};
+
+const ensureAuthSetup = () => {
+  const state = useAuthStore.getState();
+
+  if (!isSupabaseConfigured || !supabase) {
+    state.setUserId(null);
+    state.setInitializing(false);
+    state.setInitialized(true);
+    return;
+  }
+
+  if (!initializePromise) {
+    initializePromise = initializeAuthSession().finally(() => {
+      initializePromise = null;
+    });
+  }
+
+  if (!authSubscriptionInitialized) {
+    authSubscriptionInitialized = true;
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      const nextState = useAuthStore.getState();
+      nextState.setUserId(session?.user?.id ?? null);
+      nextState.setInitialized(true);
+
+      if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+        await supabase.auth.getSession();
+      }
+    });
+  }
+};
+
 export const useAuth = () => {
-  const { userId, setUserId, initialized, setInitialized } = useAuthStore();
+  const { userId, setUserId, initialized, initializing } = useAuthStore();
 
   useEffect(() => {
+    ensureAuthSetup();
+
     if (!isSupabaseConfigured || !supabase) {
       setUserId(null);
-      setInitialized(true);
-      return;
     }
-
-    let active = true;
-
-    supabase.auth
-      .getSession()
-      .then(({ data }) => {
-        if (!active) return;
-        setUserId(data?.session?.user?.id ?? null);
-      })
-      .catch(() => {
-        if (!active) return;
-        setUserId(null);
-      })
-      .finally(() => {
-        if (!active) return;
-        setInitialized(true);
-      });
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (!active) return;
-      setUserId(session?.user?.id ?? null);
-    });
-
-    return () => {
-      active = false;
-      sub?.subscription?.unsubscribe();
-    };
-  }, [setInitialized, setUserId]);
+  }, [setUserId]);
 
   return {
     initialized,
+    initializing,
     isSupabaseConfigured,
     userId,
     login: async (email: string, password: string): Promise<AuthResult> => {
@@ -81,7 +105,7 @@ export const useAuth = () => {
       });
 
       if (error) return { ok: false, message: error.message };
-      return { ok: true };
+      return { ok: true, message: 'Login successful.' };
     },
     signup: async (email: string, password: string): Promise<AuthResult> => {
       if (!supabase || !isSupabaseConfigured) return notConfiguredResult();
@@ -105,7 +129,8 @@ export const useAuth = () => {
       if (!supabase || !isSupabaseConfigured) return notConfiguredResult();
       const { error } = await supabase.auth.signOut();
       if (error) return { ok: false, message: error.message };
-      return { ok: true };
+      useAuthStore.getState().setUserId(null);
+      return { ok: true, message: 'Logged out.' };
     },
     forgotPassword: async (email: string): Promise<AuthResult> => {
       if (!supabase || !isSupabaseConfigured) return notConfiguredResult();
