@@ -1,0 +1,10 @@
+{
+  "name": "Matcha Cost Platform",
+  "short_name": "MatchaCost",
+  "theme_color": "#121212",
+  "background_color": "#121212",
+  "display": "standalone",
+  "start_url": "/",
+  "icons": [],
+  "shortcuts": [{ "name": "New Recipe", "url": "/recipes" }]
+}
