@@ -86,15 +86,16 @@ export default function RecipeFormPage() {
   const setField = (field: keyof FormValues, value: string) => {
     setForm((prev) => ({ ...prev, [field]: field === 'recipeName' ? value : toNum(value) }));
   };
+  const thb = (value: number) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 2 }).format(value);
 
   const saveRecipe = async () => {
     if (!supabase || !userId) {
-      setError('You must be logged in and Supabase must be configured.');
+      setError('ต้องเข้าสู่ระบบและตั้งค่า Supabase ก่อน');
       return;
     }
 
     if (!form.recipeName.trim()) {
-      setError('Recipe name is required.');
+      setError('กรุณาใส่ชื่อสูตร');
       return;
     }
 
@@ -141,54 +142,54 @@ export default function RecipeFormPage() {
   return (
     <section className="space-y-4 pb-24">
       <header className="space-y-1">
-        <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">Recipes</p>
-        <h1 className="text-2xl font-semibold">{isEdit ? 'Edit recipe' : 'Add recipe'}</h1>
+        <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">สูตรขาย</p>
+        <h1 className="text-2xl font-semibold">{isEdit ? 'แก้ไขสูตร' : 'เพิ่มสูตรใหม่'}</h1>
       </header>
 
       {loading ? (
-        <p className="text-sm text-zinc-300">Loading recipe...</p>
+        <p className="text-sm text-zinc-300">กำลังโหลดข้อมูลสูตร...</p>
       ) : (
         <div className="recipe-card space-y-3">
           {error && <p className="text-sm text-rose-300">{error}</p>}
 
           <label className="space-y-1 block">
-            <span className="text-sm text-zinc-300">Recipe Name</span>
-            <input className="auth-input" value={form.recipeName} onChange={(e) => setField('recipeName', e.target.value)} />
+            <span className="text-base text-zinc-300">ชื่อเมนู</span>
+            <input className="auth-input text-base" value={form.recipeName} onChange={(e) => setField('recipeName', e.target.value)} placeholder="เช่น มัทฉะลาเต้เย็น" />
           </label>
 
           {[
-            ['matchaCost', 'Matcha Cost (per gram)'],
-            ['gramsUsed', 'Grams Used'],
-            ['milkCost', 'Milk Cost'],
-            ['cupCost', 'Cup Cost'],
-            ['toppingCost', 'Topping Cost'],
-            ['sellingPrice', 'Selling Price']
+            ['matchaCost', 'ราคามัทฉะต่อกรัม (บาท)'],
+            ['gramsUsed', 'ใช้มัทฉะกี่กรัม'],
+            ['milkCost', 'ค่านมต่อแก้ว (บาท)'],
+            ['cupCost', 'ค่าแก้ว/บรรจุภัณฑ์ (บาท)'],
+            ['toppingCost', 'ค่าท็อปปิ้ง (บาท)'],
+            ['sellingPrice', 'ราคาขายต่อแก้ว (บาท)']
           ].map(([field, label]) => (
             <label className="space-y-1 block" key={field}>
-              <span className="text-sm text-zinc-300">{label}</span>
+              <span className="text-base text-zinc-300">{label}</span>
               <input
                 type="number"
                 step="0.01"
                 min="0"
-                className="auth-input"
+                className="auth-input text-base"
                 value={form[field as keyof FormValues] as number}
                 onChange={(e) => setField(field as keyof FormValues, e.target.value)}
               />
             </label>
           ))}
 
-          <div className="rounded-xl bg-zinc-950/70 border border-zinc-800 p-3 text-sm space-y-1">
-            <p>Ingredient Cost: ${calculated.ingredientCost.toFixed(2)}</p>
-            <p>Total Cost: ${calculated.totalCost.toFixed(2)}</p>
-            <p>Profit: ${calculated.profit.toFixed(2)}</p>
-            <p>Margin: {calculated.marginPct.toFixed(2)}%</p>
+          <div className="rounded-xl bg-zinc-950/70 border border-zinc-800 p-4 text-base space-y-2">
+            <p>ต้นทุนวัตถุดิบ: {thb(calculated.ingredientCost)}</p>
+            <p>ต้นทุนรวมต่อแก้ว: {thb(calculated.totalCost)}</p>
+            <p>กำไรต่อแก้ว: {thb(calculated.profit)}</p>
+            <p>มาร์จินกำไร: {calculated.marginPct.toFixed(2)}%</p>
           </div>
 
-          <div className="flex gap-2 pt-1">
+          <div className="flex flex-col sm:flex-row gap-3 pt-1">
             <button className="auth-btn auth-btn-primary" type="button" onClick={() => void saveRecipe()} disabled={saving}>
-              {saving ? 'Saving...' : 'Save Recipe'}
+              {saving ? 'กำลังบันทึก...' : 'บันทึกสูตร'}
             </button>
-            <Link className="auth-btn auth-btn-ghost" to="/recipes">Cancel</Link>
+            <Link className="auth-btn auth-btn-ghost" to="/recipes">ยกเลิก</Link>
           </div>
         </div>
       )}

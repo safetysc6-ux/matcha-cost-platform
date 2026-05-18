@@ -16,7 +16,7 @@ export default function AuthPage() {
     try {
       const result = await handler();
       if (!result.ok) {
-        pushToast(result.message ?? 'Authentication request failed.');
+        pushToast(result.message ?? 'เข้าสู่ระบบไม่สำเร็จ');
         return;
       }
 
@@ -24,7 +24,7 @@ export default function AuthPage() {
         pushToast(result.message);
       }
     } catch {
-      pushToast('Unexpected authentication error. Please try again.');
+      pushToast('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
     } finally {
       setLoadingAction(null);
     }
@@ -42,17 +42,17 @@ export default function AuthPage() {
   return (
     <main className="auth-shell">
       <section className="auth-card">
-        <p className="auth-eyebrow">MATCHA COST</p>
-        <h1 className="auth-title">Sign in to continue</h1>
-        <p className="auth-subtitle">Simple, stable auth with email only.</p>
+        <p className="auth-eyebrow">ต้นทุนมัทฉะ</p>
+        <h1 className="auth-title">เข้าสู่ระบบเพื่อใช้งานต่อ</h1>
+        <p className="auth-subtitle">ใช้แค่อีเมล ก็เริ่มคำนวณต้นทุนได้ทันที</p>
 
         <form onSubmit={submit} className="space-y-3 mt-5">
-          <input className="auth-input" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input className="auth-input" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          {!isSupabaseConfigured ? <p className="text-sm text-amber-300">Authentication is disabled because Supabase environment variables are missing.</p> : null}
-          <button disabled={!isSupabaseConfigured || loading || loadingAction === 'login'} className="auth-btn auth-btn-primary">{loadingAction === 'login' ? 'Logging in…' : 'Login'}</button>
-          <button disabled={!isSupabaseConfigured || loading || loadingAction === 'signup'} type="button" onClick={() => runAuthAction('signup', () => signup(email, password))} className="auth-btn auth-btn-secondary">{loadingAction === 'signup' ? 'Creating account…' : 'Create account'}</button>
-          <button disabled={!isSupabaseConfigured || loading || loadingAction === 'logout' || !userId} type="button" onClick={() => runAuthAction('logout', logout)} className="auth-btn auth-btn-ghost">{loadingAction === 'logout' ? 'Logging out…' : 'Logout'}</button>
+          <input className="auth-input text-base" placeholder="อีเมล" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input className="auth-input text-base" placeholder="รหัสผ่าน" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          {!isSupabaseConfigured ? <p className="text-sm text-amber-300">ยังไม่พร้อมใช้งาน เพราะยังไม่ได้ตั้งค่า Supabase</p> : null}
+          <button disabled={!isSupabaseConfigured || loading || loadingAction === 'login'} className="auth-btn auth-btn-primary">{loadingAction === 'login' ? 'กำลังเข้าสู่ระบบ…' : 'เข้าสู่ระบบ'}</button>
+          <button disabled={!isSupabaseConfigured || loading || loadingAction === 'signup'} type="button" onClick={() => runAuthAction('signup', () => signup(email, password))} className="auth-btn auth-btn-secondary">{loadingAction === 'signup' ? 'กำลังสร้างบัญชี…' : 'สร้างบัญชีใหม่'}</button>
+          <button disabled={!isSupabaseConfigured || loading || loadingAction === 'logout' || !userId} type="button" onClick={() => runAuthAction('logout', logout)} className="auth-btn auth-btn-ghost">{loadingAction === 'logout' ? 'กำลังออกจากระบบ…' : 'ออกจากระบบ'}</button>
         </form>
       </section>
     </main>
