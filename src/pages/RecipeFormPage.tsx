@@ -10,6 +10,7 @@ type FormValues = {
   milkCost: number;
   cupCost: number;
   toppingCost: number;
+  laborCost: number;
   sellingPrice: number;
 };
 
@@ -20,6 +21,7 @@ const defaultForm: FormValues = {
   milkCost: 0,
   cupCost: 0,
   toppingCost: 0,
+  laborCost: 0,
   sellingPrice: 0
 };
 
@@ -38,7 +40,7 @@ export default function RecipeFormPage() {
 
   const calculated = useMemo(() => {
     const ingredientCost = form.matchaCost * form.gramsUsed + form.milkCost + form.toppingCost;
-    const totalCost = ingredientCost + form.cupCost;
+    const totalCost = ingredientCost + form.cupCost + form.laborCost;
     const profit = form.sellingPrice - totalCost;
     const marginPct = form.sellingPrice > 0 ? (profit / form.sellingPrice) * 100 : 0;
     return { ingredientCost, totalCost, profit, marginPct };
@@ -51,7 +53,7 @@ export default function RecipeFormPage() {
       setLoading(true);
       const { data, error: fetchError } = await supabase
         .from('recipes')
-        .select('id, recipe_name, ingredients, ingredient_cost, packaging_cost, selling_price')
+        .select('id, recipe_name, ingredients, labor_cost, packaging_cost, selling_price')
         .eq('id', id)
         .eq('user_id', userId)
         .single();
@@ -75,6 +77,7 @@ export default function RecipeFormPage() {
         milkCost,
         cupCost: Number(data.packaging_cost ?? 0),
         toppingCost,
+        laborCost: Number(data.labor_cost ?? 0),
         sellingPrice: Number(data.selling_price ?? 0)
       });
       setLoading(false);
@@ -114,6 +117,7 @@ export default function RecipeFormPage() {
         { name: 'topping_cost', amount: form.toppingCost }
       ],
       packaging_cost: form.cupCost,
+      labor_cost: form.laborCost,
       ingredient_cost: calculated.ingredientCost,
       total_cost: calculated.totalCost,
       selling_price: form.sellingPrice,
@@ -153,7 +157,7 @@ export default function RecipeFormPage() {
           {error && <p className="text-sm text-rose-700">{error}</p>}
 
           <label className="space-y-1 block">
-            <span className="text-base text-stone-600">ชื่อเมนู</span>
+            <span className="text-base text-stone-600">ชื่อสูตร</span>
             <input className="auth-input text-base" value={form.recipeName} onChange={(e) => setField('recipeName', e.target.value)} placeholder="เช่น มัทฉะลาเต้เย็น" />
           </label>
 
@@ -163,6 +167,7 @@ export default function RecipeFormPage() {
             ['milkCost', 'ค่านมต่อแก้ว (บาท)'],
             ['cupCost', 'ค่าแก้ว/บรรจุภัณฑ์ (บาท)'],
             ['toppingCost', 'ค่าท็อปปิ้ง (บาท)'],
+            ['laborCost', 'ค่าแรง (บาท)'],
             ['sellingPrice', 'ราคาขายต่อแก้ว (บาท)']
           ].map(([field, label]) => (
             <label className="space-y-1 block" key={field}>
