@@ -12,9 +12,11 @@ type RecipeRow = {
   selling_price: number;
   profit: number;
   margin_pct: number;
+  created_at: string;
 };
 
 const fmtCurrency = (value: number) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 2 }).format(value);
+const fmtDate = (value: string) => new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
 
 export default function RecipePage() {
   const { userId, isSupabaseConfigured } = useAuth();
@@ -38,9 +40,9 @@ export default function RecipePage() {
 
     const { data, error: fetchError } = await supabase
       .from('recipes')
-      .select('id, recipe_name, ingredient_cost, total_cost, selling_price, profit, margin_pct')
+      .select('id, recipe_name, ingredient_cost, total_cost, selling_price, profit, margin_pct, created_at')
       .eq('user_id', userId)
-      .order('updated_at', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (fetchError) {
       setError(fetchError.message);
@@ -104,6 +106,7 @@ export default function RecipePage() {
                 <p>ต้นทุนวัตถุดิบ: {fmtCurrency(recipe.ingredient_cost)}</p>
                 <p>ราคาขาย: {fmtCurrency(recipe.selling_price)}</p>
                 <p>กำไร: {fmtCurrency(recipe.profit)} · มาร์จิน: {recipe.margin_pct.toFixed(1)}%</p>
+                <p>วันที่สร้าง: {fmtDate(recipe.created_at)}</p>
               </div>
 
               <div className="mt-4 flex items-center gap-2">
