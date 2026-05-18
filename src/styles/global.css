@@ -106,3 +106,11 @@ body {
     @apply rounded-xl;
   }
 }
+
+.recipe-action-btn {
+  @apply inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800/60 px-3 py-1.5 text-xs text-zinc-100;
+}
+
+.recipe-action-btn-danger {
+  @apply border-rose-900/80 text-rose-200;
+}
