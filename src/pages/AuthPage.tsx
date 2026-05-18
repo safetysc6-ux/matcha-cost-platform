@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { useAuth } from '@/features/auth/useAuth';
 
 export default function AuthPage() {
-  const { login, signup, forgotPassword, loginWithGoogle, loginWithLine } = useAuth();
+  const { login, signup, forgotPassword, loginWithGoogle, loginWithLine, isSupabaseConfigured } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -11,10 +11,11 @@ export default function AuthPage() {
     <form onSubmit={submit} className="glass p-4 rounded-2xl space-y-2">
       <input className="w-full bg-zinc-900 p-2 rounded" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} />
       <input className="w-full bg-zinc-900 p-2 rounded" placeholder="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button className="w-full bg-matcha-600 rounded p-2">Login</button>
-      <button type="button" onClick={() => signup(email, password)} className="w-full bg-zinc-700 rounded p-2">Signup</button>
-      <button type="button" onClick={() => forgotPassword(email)} className="w-full bg-zinc-700 rounded p-2">Forgot Password</button>
-      <button type="button" onClick={() => loginWithGoogle()} className="w-full bg-zinc-700 rounded p-2">Google</button>
-      <button type="button" onClick={() => loginWithLine()} className="w-full bg-zinc-700 rounded p-2">LINE</button>
+      {!isSupabaseConfigured ? <p className="text-sm text-amber-300">Authentication is disabled because Supabase environment variables are missing.</p> : null}
+      <button disabled={!isSupabaseConfigured} className="w-full bg-matcha-600 rounded p-2 disabled:opacity-50">Login</button>
+      <button disabled={!isSupabaseConfigured} type="button" onClick={() => signup(email, password)} className="w-full bg-zinc-700 rounded p-2 disabled:opacity-50">Signup</button>
+      <button disabled={!isSupabaseConfigured} type="button" onClick={() => forgotPassword(email)} className="w-full bg-zinc-700 rounded p-2 disabled:opacity-50">Forgot Password</button>
+      <button disabled={!isSupabaseConfigured} type="button" onClick={() => loginWithGoogle()} className="w-full bg-zinc-700 rounded p-2 disabled:opacity-50">Google</button>
+      <button disabled={!isSupabaseConfigured} type="button" onClick={() => loginWithLine()} className="w-full bg-zinc-700 rounded p-2 disabled:opacity-50">LINE</button>
     </form></main>;
 }

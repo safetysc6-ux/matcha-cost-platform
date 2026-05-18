@@ -1,4 +1,15 @@
 import { create } from 'zustand';
 
-type AuthState = { userId: string | null; setUserId: (userId: string | null) => void };
-export const useAuthStore = create<AuthState>((set) => ({ userId: null, setUserId: (userId) => set({ userId }) }));
+type AuthState = {
+  userId: string | null;
+  initialized: boolean;
+  setUserId: (userId: string | null) => void;
+  setInitialized: (initialized: boolean) => void;
+};
+
+export const useAuthStore = create<AuthState>((set) => ({
+  userId: null,
+  initialized: false,
+  setUserId: (userId) => set({ userId }),
+  setInitialized: (initialized) => set({ initialized })
+}));
