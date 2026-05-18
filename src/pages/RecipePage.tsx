@@ -76,31 +76,31 @@ export default function RecipePage() {
   return (
     <section className="space-y-4 pb-20">
       <header className="space-y-1">
-        <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">สูตรขาย</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-[#5f6d55]">สูตรขาย</p>
         <h1 className="text-2xl font-semibold">คลังสูตรของคุณ</h1>
       </header>
 
       {!isSupabaseConfigured && (
         <div className="empty-state">
           <h3 className="font-semibold">ยังไม่พร้อมบันทึกข้อมูล</h3>
-          <p className="text-sm text-zinc-300 mt-1">กรุณาตั้งค่า env ของ Supabase ก่อนใช้งานการบันทึกสูตร</p>
+          <p className="text-sm text-stone-600 mt-1">กรุณาตั้งค่า env ของ Supabase ก่อนใช้งานการบันทึกสูตร</p>
         </div>
       )}
 
-      {error && <p className="text-sm text-rose-300">{error}</p>}
+      {error && <p className="text-sm text-rose-700">{error}</p>}
 
       {loading ? (
-        <p className="text-sm text-zinc-300">กำลังโหลดสูตร...</p>
+        <p className="text-sm text-stone-600">กำลังโหลดสูตร...</p>
       ) : (
         <div className="grid gap-3">
           {recipes.map((recipe) => (
             <article key={recipe.id} className="recipe-card">
               <div className="flex items-start justify-between gap-3">
                 <h2 className="text-base font-semibold">{recipe.recipe_name}</h2>
-                <span className="text-sm text-matcha-300">{fmtCurrency(recipe.total_cost)} / แก้ว</span>
+                <span className="text-sm text-[#35563d]">{fmtCurrency(recipe.total_cost)} / แก้ว</span>
               </div>
 
-              <div className="mt-3 text-sm text-zinc-300 space-y-1">
+              <div className="mt-3 text-sm text-stone-600 space-y-1">
                 <p>ต้นทุนวัตถุดิบ: {fmtCurrency(recipe.ingredient_cost)}</p>
                 <p>ราคาขาย: {fmtCurrency(recipe.selling_price)}</p>
                 <p>กำไร: {fmtCurrency(recipe.profit)} · มาร์จิน: {recipe.margin_pct.toFixed(1)}%</p>
@@ -127,7 +127,7 @@ export default function RecipePage() {
       {!loading && !hasRecipes && (
         <div className="empty-state">
           <h3 className="font-semibold">ยังไม่มีสูตรขาย</h3>
-          <p className="text-sm text-zinc-300 mt-1">กดปุ่ม + เพื่อเพิ่มสูตรแรกของคุณ</p>
+          <p className="text-sm text-stone-600 mt-1">กดปุ่ม + เพื่อเพิ่มสูตรแรกของคุณ</p>
         </div>
       )}
 

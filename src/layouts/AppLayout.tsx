@@ -11,7 +11,7 @@ export const AppLayout = () => {
   const location = useLocation();
   return (
     <div className="app-shell">
-      <main className="app-content"><Outlet /></main>
+      <main className="app-content"><div className="h-1.5 w-14 rounded-full bg-[#7e936f]/50 mb-4" /><Outlet /></main>
       <nav className="bottom-nav-wrap" aria-label="เมนูหลัก">
         <div className="bottom-nav">
           {tabs.map((tab) => {
@@ -19,7 +19,7 @@ export const AppLayout = () => {
             const active = location.pathname === tab.to;
             return (
               <Link key={tab.to} to={tab.to} className={active ? 'bottom-nav-item is-active' : 'bottom-nav-item'}>
-                <ActiveIcon className="w-5 h-5 mx-auto" /><span className="text-xs">{tab.label}</span>
+                <ActiveIcon className="w-5 h-5 mx-auto" /><span className="text-[11px] tracking-wide">{tab.label}</span>
               </Link>
             );
           })}

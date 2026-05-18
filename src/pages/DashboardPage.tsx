@@ -1,7 +1,18 @@
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, ResponsiveContainer, CartesianGrid } from 'recharts';
+
 const data = [{ x: 'W1', y: 20 }, { x: 'W2', y: 35 }, { x: 'W3', y: 45 }];
+
 export default function DashboardPage() {
   const safeData = Array.isArray(data) ? data : [];
 
-  return <section className="space-y-3"><h1 className="text-2xl font-bold">ภาพรวมยอดขาย</h1><div className="glass rounded-2xl p-4 h-56">{safeData.length === 0 ? <p className="text-base text-zinc-400">ยังไม่มีข้อมูลยอดขายในตอนนี้</p> : <ResponsiveContainer width="100%" height="100%"><LineChart data={safeData}><Line type="monotone" dataKey="y" stroke="#5E7C4E" isAnimationActive={false} /></LineChart></ResponsiveContainer>}</div></section>;
+  return <section className="space-y-4 pb-20">
+    <header className="space-y-1">
+      <p className="text-xs uppercase tracking-[0.2em] text-[#5f6d55]">Cafe insight</p>
+      <h1 className="text-2xl font-semibold text-[#2f382a]">ภาพรวมยอดขาย</h1>
+    </header>
+
+    <div className="glass rounded-3xl p-5 h-64">
+      {safeData.length === 0 ? <p className="text-base text-stone-600">ยังไม่มีข้อมูลยอดขายในตอนนี้</p> : <ResponsiveContainer width="100%" height="100%"><LineChart data={safeData} margin={{ left: 8, right: 8, top: 12, bottom: 4 }}><CartesianGrid stroke="#ddd3c3" vertical={false} /><Line type="monotone" dataKey="y" stroke="#35563d" strokeWidth={3} dot={{ r: 3, fill: '#35563d' }} activeDot={{ r: 5 }} isAnimationActive animationDuration={800} /></LineChart></ResponsiveContainer>}
+    </div>
+  </section>;
 }
