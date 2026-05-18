@@ -142,18 +142,18 @@ export default function RecipeFormPage() {
   return (
     <section className="space-y-4 pb-24">
       <header className="space-y-1">
-        <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">สูตรขาย</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-[#5f6d55]">สูตรขาย</p>
         <h1 className="text-2xl font-semibold">{isEdit ? 'แก้ไขสูตร' : 'เพิ่มสูตรใหม่'}</h1>
       </header>
 
       {loading ? (
-        <p className="text-sm text-zinc-300">กำลังโหลดข้อมูลสูตร...</p>
+        <p className="text-sm text-stone-600">กำลังโหลดข้อมูลสูตร...</p>
       ) : (
         <div className="recipe-card space-y-3">
-          {error && <p className="text-sm text-rose-300">{error}</p>}
+          {error && <p className="text-sm text-rose-700">{error}</p>}
 
           <label className="space-y-1 block">
-            <span className="text-base text-zinc-300">ชื่อเมนู</span>
+            <span className="text-base text-stone-600">ชื่อเมนู</span>
             <input className="auth-input text-base" value={form.recipeName} onChange={(e) => setField('recipeName', e.target.value)} placeholder="เช่น มัทฉะลาเต้เย็น" />
           </label>
 
@@ -166,7 +166,7 @@ export default function RecipeFormPage() {
             ['sellingPrice', 'ราคาขายต่อแก้ว (บาท)']
           ].map(([field, label]) => (
             <label className="space-y-1 block" key={field}>
-              <span className="text-base text-zinc-300">{label}</span>
+              <span className="text-base text-stone-600">{label}</span>
               <input
                 type="number"
                 step="0.01"
@@ -178,7 +178,7 @@ export default function RecipeFormPage() {
             </label>
           ))}
 
-          <div className="rounded-xl bg-zinc-950/70 border border-zinc-800 p-4 text-base space-y-2">
+          <div className="rounded-2xl bg-[#f2ecdf] border border-[#d9ccb5] p-4 text-base space-y-2 shadow-inner">
             <p>ต้นทุนวัตถุดิบ: {thb(calculated.ingredientCost)}</p>
             <p>ต้นทุนรวมต่อแก้ว: {thb(calculated.totalCost)}</p>
             <p>กำไรต่อแก้ว: {thb(calculated.profit)}</p>
