@@ -2,15 +2,15 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { userId, initialized, initializing, isSupabaseConfigured } = useAuth();
+  const { isAuthenticated, initialized, loading, isSupabaseConfigured } = useAuth();
 
-  if (!initialized || initializing) {
-    return <div className="p-4">Loading…</div>;
+  if (!initialized || loading) {
+    return <div className="page-loader">Loading your workspace…</div>;
   }
 
   if (!isSupabaseConfigured) {
     return children;
   }
 
-  return userId ? children : <Navigate to="/auth" replace />;
+  return isAuthenticated ? children : <Navigate to="/auth" replace />;
 };

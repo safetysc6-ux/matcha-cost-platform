@@ -3,10 +3,10 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth/useAuth';
 import { pushToast } from '@/components/ui/Toast';
 
-type AuthAction = 'login' | 'signup' | 'forgot-password' | 'logout' | null;
+type AuthAction = 'login' | 'signup' | 'logout' | null;
 
 export default function AuthPage() {
-  const { login, signup, logout, forgotPassword, loginWithGoogle, loginWithLine, isSupabaseConfigured, userId, initialized } = useAuth();
+  const { login, signup, logout, isSupabaseConfigured, userId, initialized, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loadingAction, setLoadingAction] = useState<AuthAction>(null);
@@ -39,16 +39,22 @@ export default function AuthPage() {
     return <Navigate to="/" replace />;
   }
 
-  return <main className="max-w-md mx-auto p-4 space-y-3"><h1 className="text-xl font-bold">Welcome</h1>
-    <form onSubmit={submit} className="glass p-4 rounded-2xl space-y-2">
-      <input className="w-full bg-zinc-900 p-2 rounded" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input className="w-full bg-zinc-900 p-2 rounded" placeholder="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      {!isSupabaseConfigured ? <p className="text-sm text-amber-300">Authentication is disabled because Supabase environment variables are missing.</p> : null}
-      <button disabled={!isSupabaseConfigured || loadingAction === 'login'} className="w-full bg-matcha-600 rounded p-2 disabled:opacity-50">{loadingAction === 'login' ? 'Logging in…' : 'Login'}</button>
-      <button disabled={!isSupabaseConfigured || loadingAction === 'signup'} type="button" onClick={() => runAuthAction('signup', () => signup(email, password))} className="w-full bg-zinc-700 rounded p-2 disabled:opacity-50">{loadingAction === 'signup' ? 'Signing up…' : 'Signup'}</button>
-      <button disabled={!isSupabaseConfigured || loadingAction === 'forgot-password'} type="button" onClick={() => runAuthAction('forgot-password', () => forgotPassword(email))} className="w-full bg-zinc-700 rounded p-2 disabled:opacity-50">{loadingAction === 'forgot-password' ? 'Sending…' : 'Forgot Password'}</button>
-      <button disabled={!isSupabaseConfigured || loadingAction === 'logout' || !userId} type="button" onClick={() => runAuthAction('logout', logout)} className="w-full bg-zinc-700 rounded p-2 disabled:opacity-50">{loadingAction === 'logout' ? 'Logging out…' : 'Logout'}</button>
-      <button disabled={!isSupabaseConfigured} type="button" onClick={() => loginWithGoogle()} className="w-full bg-zinc-700 rounded p-2 disabled:opacity-50">Google</button>
-      <button disabled={!isSupabaseConfigured} type="button" onClick={() => loginWithLine()} className="w-full bg-zinc-700 rounded p-2 disabled:opacity-50">LINE</button>
-    </form></main>;
+  return (
+    <main className="auth-shell">
+      <section className="auth-card">
+        <p className="auth-eyebrow">MATCHA COST</p>
+        <h1 className="auth-title">Sign in to continue</h1>
+        <p className="auth-subtitle">Simple, stable auth with email only.</p>
+
+        <form onSubmit={submit} className="space-y-3 mt-5">
+          <input className="auth-input" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input className="auth-input" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          {!isSupabaseConfigured ? <p className="text-sm text-amber-300">Authentication is disabled because Supabase environment variables are missing.</p> : null}
+          <button disabled={!isSupabaseConfigured || loading || loadingAction === 'login'} className="auth-btn auth-btn-primary">{loadingAction === 'login' ? 'Logging in…' : 'Login'}</button>
+          <button disabled={!isSupabaseConfigured || loading || loadingAction === 'signup'} type="button" onClick={() => runAuthAction('signup', () => signup(email, password))} className="auth-btn auth-btn-secondary">{loadingAction === 'signup' ? 'Creating account…' : 'Create account'}</button>
+          <button disabled={!isSupabaseConfigured || loading || loadingAction === 'logout' || !userId} type="button" onClick={() => runAuthAction('logout', logout)} className="auth-btn auth-btn-ghost">{loadingAction === 'logout' ? 'Logging out…' : 'Logout'}</button>
+        </form>
+      </section>
+    </main>
+  );
 }

@@ -5,12 +5,104 @@
 :root {
   color-scheme: dark;
 }
+
 body {
   @apply bg-zinc-950 text-zinc-100 min-h-screen;
+  background: radial-gradient(circle at top, #27272a 0%, #09090b 45%, #030712 100%);
 }
+
 .safe-p {
   padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
 }
+
 .glass {
   @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-glass;
+}
+
+.page-loader {
+  @apply min-h-screen flex items-center justify-center text-zinc-300 px-4 text-center;
+}
+
+.auth-shell {
+  @apply min-h-screen px-4 py-10 flex items-center justify-center;
+}
+
+.auth-card {
+  @apply w-full max-w-md rounded-3xl border border-white/10 bg-zinc-900/80 p-5 shadow-2xl;
+}
+
+.auth-eyebrow {
+  @apply text-xs tracking-[0.18em] uppercase text-zinc-400;
+}
+
+.auth-title {
+  @apply mt-2 text-2xl font-semibold;
+}
+
+.auth-subtitle {
+  @apply mt-2 text-sm text-zinc-300;
+}
+
+.auth-input {
+  @apply w-full bg-zinc-950 border border-zinc-800 p-3 rounded-xl outline-none focus:ring-2 focus:ring-matcha-500;
+}
+
+.auth-btn {
+  @apply w-full rounded-xl p-3 disabled:opacity-60 disabled:cursor-not-allowed transition-colors;
+}
+
+.auth-btn-primary {
+  @apply bg-matcha-600 hover:bg-matcha-500 text-white;
+}
+
+.auth-btn-secondary {
+  @apply bg-zinc-700 hover:bg-zinc-600;
+}
+
+.auth-btn-ghost {
+  @apply bg-transparent border border-zinc-700 hover:bg-zinc-800;
+}
+
+.app-shell {
+  @apply mx-auto max-w-md min-h-screen pb-24 safe-p;
+}
+
+.app-content {
+  @apply px-4 pt-5 pb-2;
+}
+
+.bottom-nav-wrap {
+  @apply fixed bottom-0 inset-x-0 mx-auto max-w-md p-3;
+}
+
+.bottom-nav {
+  @apply glass rounded-2xl flex justify-around items-center py-2;
+}
+
+.bottom-nav-item {
+  @apply text-zinc-300 w-20 text-center py-1 rounded-xl;
+}
+
+.bottom-nav-item.is-active {
+  @apply text-matcha-500 bg-white/5;
+}
+
+.recipe-card {
+  @apply rounded-2xl border border-white/10 bg-zinc-900/75 p-4;
+}
+
+.empty-state {
+  @apply rounded-2xl border border-dashed border-zinc-700 bg-zinc-900/50 p-4;
+}
+
+.fab-btn {
+  @apply fixed bottom-24 right-6 h-14 w-14 rounded-full bg-matcha-600 hover:bg-matcha-500 text-3xl leading-none shadow-xl;
+}
+
+@media (max-width: 380px) {
+  .auth-card,
+  .recipe-card,
+  .empty-state {
+    @apply rounded-xl;
+  }
 }

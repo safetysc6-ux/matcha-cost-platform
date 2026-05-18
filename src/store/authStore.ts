@@ -1,26 +1,26 @@
 import { create } from 'zustand';
+import type { Session } from '@supabase/supabase-js';
+
+type AuthStatus = 'idle' | 'loading' | 'ready';
 
 type AuthState = {
-  userId: string | null;
-  initialized: boolean;
-  initializing: boolean;
-  setUserId: (userId: string | null) => void;
-  setInitialized: (initialized: boolean) => void;
-  setInitializing: (initializing: boolean) => void;
+  session: Session | null;
+  status: AuthStatus;
+  setSession: (session: Session | null) => void;
+  setStatus: (status: AuthStatus) => void;
+  isAuthenticated: () => boolean;
   reset: () => void;
 };
 
-export const useAuthStore = create<AuthState>((set) => ({
-  userId: null,
-  initialized: false,
-  initializing: false,
-  setUserId: (userId) => set({ userId }),
-  setInitialized: (initialized) => set({ initialized }),
-  setInitializing: (initializing) => set({ initializing }),
+export const useAuthStore = create<AuthState>((set, get) => ({
+  session: null,
+  status: 'idle',
+  setSession: (session) => set({ session }),
+  setStatus: (status) => set({ status }),
+  isAuthenticated: () => Boolean(get().session?.user?.id),
   reset: () =>
     set({
-      userId: null,
-      initialized: false,
-      initializing: false
+      session: null,
+      status: 'idle'
     })
 }));

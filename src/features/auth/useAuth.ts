@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import type { Session } from '@supabase/supabase-js';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 
@@ -26,72 +27,54 @@ const notConfiguredResult = (): AuthResult => ({
   message: 'Authentication is not configured. Missing Supabase environment variables.'
 });
 
-let authSubscriptionInitialized = false;
-let initializePromise: Promise<void> | null = null;
+let setupDone = false;
 
-const initializeAuthSession = async () => {
+const applySession = (session: Session | null) => {
   const state = useAuthStore.getState();
-  if (state.initialized || state.initializing) return;
-
-  state.setInitializing(true);
-  try {
-    const { data } = await supabase!.auth.getSession();
-    useAuthStore.getState().setUserId(data?.session?.user?.id ?? null);
-  } catch {
-    useAuthStore.getState().setUserId(null);
-  } finally {
-    const current = useAuthStore.getState();
-    current.setInitializing(false);
-    current.setInitialized(true);
-  }
+  state.setSession(session);
+  state.setStatus('ready');
 };
 
-const ensureAuthSetup = () => {
+const initializeAuth = async () => {
   const state = useAuthStore.getState();
 
   if (!isSupabaseConfigured || !supabase) {
-    state.setUserId(null);
-    state.setInitializing(false);
-    state.setInitialized(true);
+    state.setSession(null);
+    state.setStatus('ready');
     return;
   }
 
-  if (!initializePromise) {
-    initializePromise = initializeAuthSession().finally(() => {
-      initializePromise = null;
-    });
+  if (state.status === 'loading' || state.status === 'ready') {
+    return;
   }
 
-  if (!authSubscriptionInitialized) {
-    authSubscriptionInitialized = true;
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      const nextState = useAuthStore.getState();
-      nextState.setUserId(session?.user?.id ?? null);
-      nextState.setInitialized(true);
+  state.setStatus('loading');
 
-      if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
-        await supabase.auth.getSession();
-      }
+  const { data } = await supabase.auth.getSession();
+  applySession(data.session ?? null);
+
+  if (!setupDone) {
+    setupDone = true;
+    supabase.auth.onAuthStateChange((_event, session) => {
+      applySession(session ?? null);
     });
   }
 };
 
 export const useAuth = () => {
-  const { userId, setUserId, initialized, initializing } = useAuthStore();
+  const { session, status, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    ensureAuthSetup();
-
-    if (!isSupabaseConfigured || !supabase) {
-      setUserId(null);
-    }
-  }, [setUserId]);
+    void initializeAuth();
+  }, []);
 
   return {
-    initialized,
-    initializing,
+    session,
+    initialized: status === 'ready',
+    loading: status !== 'ready',
     isSupabaseConfigured,
-    userId,
+    userId: session?.user?.id ?? null,
+    isAuthenticated: isAuthenticated(),
     login: async (email: string, password: string): Promise<AuthResult> => {
       if (!supabase || !isSupabaseConfigured) return notConfiguredResult();
       const emailError = validateEmail(email);
@@ -129,30 +112,8 @@ export const useAuth = () => {
       if (!supabase || !isSupabaseConfigured) return notConfiguredResult();
       const { error } = await supabase.auth.signOut();
       if (error) return { ok: false, message: error.message };
-      useAuthStore.getState().setUserId(null);
+      useAuthStore.getState().setSession(null);
       return { ok: true, message: 'Logged out.' };
-    },
-    forgotPassword: async (email: string): Promise<AuthResult> => {
-      if (!supabase || !isSupabaseConfigured) return notConfiguredResult();
-      const emailError = validateEmail(email);
-      if (emailError) return { ok: false, message: emailError };
-
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/auth`
-      });
-
-      if (error) return { ok: false, message: error.message };
-      return { ok: true, message: 'Password reset email sent.' };
-    },
-    loginWithGoogle: () =>
-      supabase?.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: `${window.location.origin}/auth` }
-      }),
-    loginWithLine: () =>
-      supabase?.auth.signInWithOAuth({
-        provider: 'line',
-        options: { redirectTo: `${window.location.origin}/auth` }
-      })
+    }
   };
 };
