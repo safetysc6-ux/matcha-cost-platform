@@ -5,15 +5,15 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from '@/app/App';
 import '@/styles/global.css';
 
-// Service worker is intentionally disabled until production fetch/cache logic is hardened.
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    await Promise.all(registrations.map((registration) => registration.unregister()));
-  });
+// Service worker logic is intentionally disabled while production stability is hardened.
+
+const rootElement = document.getElementById('root');
+
+if (!rootElement) {
+  throw new Error('Root element not found');
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <HelmetProvider>
       <BrowserRouter>
