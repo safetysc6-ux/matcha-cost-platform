@@ -5,8 +5,12 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from '@/app/App';
 import '@/styles/global.css';
 
+// Service worker is intentionally disabled until production fetch/cache logic is hardened.
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+  window.addEventListener('load', async () => {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+  });
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
