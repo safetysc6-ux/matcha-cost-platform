@@ -14,7 +14,7 @@ type RecipeRow = {
   margin_pct: number;
 };
 
-const fmtCurrency = (value: number) => `$${value.toFixed(2)}`;
+const fmtCurrency = (value: number) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 2 }).format(value);
 
 export default function RecipePage() {
   const { userId, isSupabaseConfigured } = useAuth();
@@ -58,7 +58,7 @@ export default function RecipePage() {
 
   const handleDelete = async (id: string) => {
     if (!supabase || !userId) return;
-    const confirmed = window.confirm('Delete this recipe?');
+    const confirmed = window.confirm('ลบสูตรนี้ใช่ไหม');
     if (!confirmed) return;
 
     setDeletingId(id);
@@ -76,39 +76,39 @@ export default function RecipePage() {
   return (
     <section className="space-y-4 pb-20">
       <header className="space-y-1">
-        <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">Recipes</p>
-        <h1 className="text-2xl font-semibold">Your recipe library</h1>
+        <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">สูตรขาย</p>
+        <h1 className="text-2xl font-semibold">คลังสูตรของคุณ</h1>
       </header>
 
       {!isSupabaseConfigured && (
         <div className="empty-state">
-          <h3 className="font-semibold">Supabase not configured</h3>
-          <p className="text-sm text-zinc-300 mt-1">Add env keys to save and manage recipes.</p>
+          <h3 className="font-semibold">ยังไม่พร้อมบันทึกข้อมูล</h3>
+          <p className="text-sm text-zinc-300 mt-1">กรุณาตั้งค่า env ของ Supabase ก่อนใช้งานการบันทึกสูตร</p>
         </div>
       )}
 
       {error && <p className="text-sm text-rose-300">{error}</p>}
 
       {loading ? (
-        <p className="text-sm text-zinc-300">Loading recipes...</p>
+        <p className="text-sm text-zinc-300">กำลังโหลดสูตร...</p>
       ) : (
         <div className="grid gap-3">
           {recipes.map((recipe) => (
             <article key={recipe.id} className="recipe-card">
               <div className="flex items-start justify-between gap-3">
                 <h2 className="text-base font-semibold">{recipe.recipe_name}</h2>
-                <span className="text-xs text-matcha-300">{fmtCurrency(recipe.total_cost)} / cup</span>
+                <span className="text-sm text-matcha-300">{fmtCurrency(recipe.total_cost)} / แก้ว</span>
               </div>
 
               <div className="mt-3 text-sm text-zinc-300 space-y-1">
-                <p>Ingredient Cost: {fmtCurrency(recipe.ingredient_cost)}</p>
-                <p>Selling Price: {fmtCurrency(recipe.selling_price)}</p>
-                <p>Profit: {fmtCurrency(recipe.profit)} · Margin: {recipe.margin_pct.toFixed(1)}%</p>
+                <p>ต้นทุนวัตถุดิบ: {fmtCurrency(recipe.ingredient_cost)}</p>
+                <p>ราคาขาย: {fmtCurrency(recipe.selling_price)}</p>
+                <p>กำไร: {fmtCurrency(recipe.profit)} · มาร์จิน: {recipe.margin_pct.toFixed(1)}%</p>
               </div>
 
               <div className="mt-4 flex items-center gap-2">
-                <Link className="recipe-action-btn" to={`/recipes/${recipe.id}/edit`} aria-label={`Edit ${recipe.recipe_name}`}>
-                  <Pencil className="w-4 h-4" /> Edit
+                <Link className="recipe-action-btn" to={`/recipes/${recipe.id}/edit`} aria-label={`แก้ไข ${recipe.recipe_name}`}>
+                  <Pencil className="w-4 h-4" /> แก้ไข
                 </Link>
                 <button
                   className="recipe-action-btn recipe-action-btn-danger"
@@ -116,7 +116,7 @@ export default function RecipePage() {
                   onClick={() => void handleDelete(recipe.id)}
                   disabled={deletingId === recipe.id}
                 >
-                  <Trash2 className="w-4 h-4" /> {deletingId === recipe.id ? 'Deleting...' : 'Delete'}
+                  <Trash2 className="w-4 h-4" /> {deletingId === recipe.id ? 'กำลังลบ...' : 'ลบสูตร'}
                 </button>
               </div>
             </article>
@@ -126,12 +126,12 @@ export default function RecipePage() {
 
       {!loading && !hasRecipes && (
         <div className="empty-state">
-          <h3 className="font-semibold">No recipes yet</h3>
-          <p className="text-sm text-zinc-300 mt-1">Tap + to add your first recipe.</p>
+          <h3 className="font-semibold">ยังไม่มีสูตรขาย</h3>
+          <p className="text-sm text-zinc-300 mt-1">กดปุ่ม + เพื่อเพิ่มสูตรแรกของคุณ</p>
         </div>
       )}
 
-      <button className="fab-btn" type="button" aria-label="Add recipe" onClick={() => navigate('/recipes/new')}>
+      <button className="fab-btn" type="button" aria-label="เพิ่มสูตรใหม่" onClick={() => navigate('/recipes/new')}>
         +
       </button>
     </section>

@@ -7,8 +7,9 @@
 }
 
 body {
-  @apply bg-zinc-950 text-zinc-100 min-h-screen;
+  @apply bg-zinc-950 text-zinc-100 min-h-screen leading-relaxed;
   background: radial-gradient(circle at top, #27272a 0%, #09090b 45%, #030712 100%);
+  font-size: 16px;
 }
 
 .safe-p {
@@ -44,11 +45,11 @@ body {
 }
 
 .auth-input {
-  @apply w-full bg-zinc-950 border border-zinc-800 p-3 rounded-xl outline-none focus:ring-2 focus:ring-matcha-500;
+  @apply w-full bg-zinc-950 border border-zinc-800 p-4 rounded-xl outline-none focus:ring-2 focus:ring-matcha-500 min-h-[52px];
 }
 
 .auth-btn {
-  @apply w-full rounded-xl p-3 disabled:opacity-60 disabled:cursor-not-allowed transition-colors;
+  @apply w-full rounded-xl px-4 py-4 min-h-[52px] text-base font-medium disabled:opacity-60 disabled:cursor-not-allowed transition-colors;
 }
 
 .auth-btn-primary {
@@ -80,7 +81,7 @@ body {
 }
 
 .bottom-nav-item {
-  @apply text-zinc-300 w-20 text-center py-1 rounded-xl;
+  @apply text-zinc-300 w-24 text-center py-2 rounded-xl min-h-[52px] flex flex-col items-center justify-center gap-1;
 }
 
 .bottom-nav-item.is-active {
@@ -96,7 +97,7 @@ body {
 }
 
 .fab-btn {
-  @apply fixed bottom-24 right-6 h-14 w-14 rounded-full bg-matcha-600 hover:bg-matcha-500 text-3xl leading-none shadow-xl;
+  @apply fixed bottom-24 right-6 h-16 w-16 rounded-full bg-matcha-600 hover:bg-matcha-500 text-3xl leading-none shadow-xl;
 }
 
 @media (max-width: 380px) {
@@ -108,7 +109,7 @@ body {
 }
 
 .recipe-action-btn {
-  @apply inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800/60 px-3 py-1.5 text-xs text-zinc-100;
+  @apply inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800/60 px-4 py-3 text-sm text-zinc-100 min-h-[48px];
 }
 
 .recipe-action-btn-danger {

@@ -2,9 +2,9 @@ import { Home, Book, ChartNoAxesCombined } from 'lucide-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const tabs = [
-  { to: '/', icon: Home, label: 'Home' },
-  { to: '/recipes', icon: Book, label: 'Recipes' },
-  { to: '/dashboard', icon: ChartNoAxesCombined, label: 'Dashboard' }
+  { to: '/', icon: Home, label: 'หน้าหลัก' },
+  { to: '/recipes', icon: Book, label: 'สูตรขาย' },
+  { to: '/dashboard', icon: ChartNoAxesCombined, label: 'ภาพรวม' }
 ];
 
 export const AppLayout = () => {
@@ -12,7 +12,7 @@ export const AppLayout = () => {
   return (
     <div className="app-shell">
       <main className="app-content"><Outlet /></main>
-      <nav className="bottom-nav-wrap" aria-label="Primary navigation">
+      <nav className="bottom-nav-wrap" aria-label="เมนูหลัก">
         <div className="bottom-nav">
           {tabs.map((tab) => {
             const ActiveIcon = tab.icon;
